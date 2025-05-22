@@ -1,0 +1,154 @@
+
+A reailer offers a reward program to its customers, awarding points based on each recorded purchase.
+a customer recieves 2 points for every dollar spent over $100 in each transaction, plus 1 point for 
+every dollar spect between $50 and $100 in each transaction. 
+(e.g. a $120 purchase = 2x$20 + 1 x $50 = 90 points).
+Given a record of every transaction during a three month period, calculate the reward points earned 
+for each  customer per month and total.
+
+* Solve using spring Boot
+* Create a RESTful endpoint 
+* Make up a data set to best demonstrate your soultion.
+* Check soultion into Github
+---------------------------
+
+Implementation:
+Post Login Username and Password -> mint JWt for frontend
+{
+    Username,
+    Password
+}
+
+Response {
+    Token: JWT,
+    Date
+}
+
+Gets a user by his/her UserId
+Get (secure) User/:UserId
+{
+    userID,
+    fristName,
+    LastName,
+    [rewardNumber],
+    createDate
+}
+
+Gets all transaction from the userID
+Get (secure) Transactions/:UserId
+{
+    transactions: [TransactionsEntity]
+}
+Get (secure) Transactions/:UserId/range/:DateFrom/:DateTo
+{
+    transactions: [TransactionsEntity]
+}
+
+Post (secure) Purchase/
+{
+    UserId,
+    Items,
+    amount,
+    date
+}
+
+repsonse {
+    transactionId,
+    rewardNumber,
+    Date
+}
+
+Get (non secure) rewards/balance/:awardNumber
+{
+    awardNumber,
+    rewardbalance
+}
+Get (non secure) rewards/balance/:awardNumber/:fromDate/:toDate
+{
+    awardNumber,
+    rewardbalance,
+    Transactions: [TransactionsEntity]
+}
+get balacne for all awardnumbers a user has tied to them.
+Get (secure) rewards/User/:userID/balance/
+{
+    awardNumber,
+    rewardbalance
+}
+get balacne for all awardnumbers a user has tied to them. using a datarange
+Get (non secure) rewards/User/:userID/balance/:fromDate/:toDate
+{
+    awardNumber,
+    rewardbalance,
+    Transactions: [TransactionsEntity]
+}
+
+
+-----------
+Jwt {
+    UserId
+    Awards number []
+    role []
+}
+
+Tables --------
+
+Transactions
+- TransactionID PK
+- UserId FK
+- Amount
+- ItemId FK
+- Transaction Date
+- Create on
+- Create By UserID FK
+
+Transaction_Items
+- ID PK
+- TransactionID FK
+- ItemID FK
+- Amount
+- RewardPoints
+- CreatedOn
+
+Users
+- UserId PK
+- fristName
+- LastName
+- Create on
+
+AwardNumbers
+- ID
+- UserId FK
+- AwardNumber
+- CreatedOn
+
+Users_Roles
+- User_RoleID PK
+- UserId FK
+- RoleId FK
+- CreateOn
+
+Login
+- LoginID PK
+- UserID FK
+- CreateOn
+
+Items
+- ID
+- ItemName
+- Description
+- CreatedOn
+
+RewardPoints
+- ID PK
+- AwardNumber UNIQUE
+- Balance
+- CreatedOn
+- LastUpdate
+
+Roles
+- RoleId
+- Name 
+
+
+
