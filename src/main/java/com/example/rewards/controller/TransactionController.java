@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@Tag(name = "transaction", description = "Endpoints for all transaction-related operations")
+@Tag(name = "Transactions", description = "Endpoints for all transaction-related operations")
 @RestController
 @RequestMapping("/transaction")
 public class TransactionController {

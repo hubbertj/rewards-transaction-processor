@@ -13,7 +13,6 @@ import java.util.List;
 @Getter
 @Setter
 @AllArgsConstructor
-@NoArgsConstructor
 public class TransactionService {
     
     public List<Transaction> getTransactionsByUserId(String userId) {
