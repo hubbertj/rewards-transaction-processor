@@ -12,10 +12,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Tag(name = "Authentication", description = "Endpoints for user authentication")
 @RestController
@@ -55,7 +58,12 @@ public class AuthController {
             throw new RuntimeException("Invalid username or password");
         }
         final UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-        final String jwt = jwtUtil.generateToken(userDetails.getUsername());
+        //Get Roles
+         List<String> roles = userDetails.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList());
+
+        final String jwt = jwtUtil.generateToken(userDetails.getUsername(), roles);
         Map<String, String> response = new HashMap<>();
         response.put("token", jwt);
         return response;
