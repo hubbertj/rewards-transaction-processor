@@ -26,7 +26,7 @@ class JwtUtilTest {
     @Test
     void generateToken_shouldReturnValidToken() {
         String username = "testUser";
-        String token = jwtUtil.generateToken(username);
+        String token = jwtUtil.generateToken(username, null);
 
         assertNotNull(token);
         assertTrue(token.length() > 0);
@@ -35,7 +35,7 @@ class JwtUtilTest {
     @Test
     void extractUsername_shouldReturnCorrectUsername() {
         String username = "testUser";
-        String token = jwtUtil.generateToken(username);
+        String token = jwtUtil.generateToken(username, null);
 
         String extractedUsername = jwtUtil.extractUsername(token);
         assertEquals(username, extractedUsername);
@@ -44,7 +44,7 @@ class JwtUtilTest {
     @Test
     void validateToken_shouldReturnTrueForValidToken() {
         String username = "testUser";
-        String token = jwtUtil.generateToken(username);
+        String token = jwtUtil.generateToken(username, null);
 
         boolean isValid = jwtUtil.validateToken(token, username);
         assertTrue(isValid);
@@ -53,7 +53,7 @@ class JwtUtilTest {
     @Test
     void validateToken_shouldReturnFalseForInvalidToken() {
         String username = "testUser";
-        String token = jwtUtil.generateToken(username);
+        String token = jwtUtil.generateToken(username, null);
 
         boolean isValid = jwtUtil.validateToken(token, "wrongUser");
         assertFalse(isValid);

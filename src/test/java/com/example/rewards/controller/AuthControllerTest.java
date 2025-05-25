@@ -13,6 +13,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,7 +43,7 @@ class AuthControllerTest {
         loginRequest.put("password", "pass");
         UserDetails userDetails = User.withUsername("user").password("pass").roles("USER").build();
         when(userDetailsService.loadUserByUsername("user")).thenReturn(userDetails);
-        when(jwtUtil.generateToken("user")).thenReturn("jwt-token");
+//        when(jwtUtil.generateToken("user"), null).thenReturn("jwt-token");
         Map<String, String> response = authController.login(loginRequest);
         assertEquals("jwt-token", response.get("token"));
     }

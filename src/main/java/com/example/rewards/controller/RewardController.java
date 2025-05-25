@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+
 @Tag(name = "Rewards", description = "Endpoints for all reward-related operations")
 @RestController
 @RequestMapping("/reward")
@@ -30,32 +32,14 @@ public class RewardController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/balance/:awardNumber/:fromDate/:toDate")
+    @GetMapping("/balance/{awardNumber}/{fromDate}/{toDate}")
     public ResponseEntity<RewardBalanceWithTransactionsResponse> getBalanceWithRange(@PathVariable ("awardNumber") String awardNumber,
-                                                                                     @PathVariable ("fromDate")) String fromDate,{
-                                                                     @PathVariable ("toDate") String toDate) {
+                                                                                     @PathVariable ("fromDate") String fromDate,
+                                                                                     @PathVariable ("toDate") String toDate) {
         // Placeholder logic for date range, can be expanded later
         Double balance = this.rewardService.getRewardBalance(awardNumber);
-        RewardBalanceWithTransactionsResponse response = new RewardBalanceWithTransactionsResponse(awardNumber, balance);
+        RewardBalanceWithTransactionsResponse response = new RewardBalanceWithTransactionsResponse(awardNumber, balance, new ArrayList<>());
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-
-
-
-
-
-
-//    Get (non secure) rewards/balance/:awardNumber
-//    {
-//        awardNumber,
-//                rewardbalance
-//    }
-//    Get (non secure) rewards/balance/:awardNumber/:fromDate/:toDate
-//    {
-//        awardNumber,
-//                rewardbalance,
-//                Transactions: [TransactionsEntity]
-//    }
-//    get balacne for all awardnumbers a user has tied to them.
 }
