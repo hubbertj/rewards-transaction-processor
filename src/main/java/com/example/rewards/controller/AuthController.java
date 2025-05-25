@@ -44,6 +44,7 @@ public class AuthController {
             @ApiResponse(responseCode = "401", description = "Invalid credentials")
         }
     )
+
     @PostMapping("/login")
     public Map<String, String> login(@RequestBody Map<String, String> loginRequest) {
         String username = loginRequest.get("username");
