@@ -35,34 +35,47 @@ public class RewardService {
         // Placeholder logic for retrieving reward details
         return "Reward details for ID: " + rewardId;
     }
-    public Double getRewardBalance(String awardNumber) {
-        // Placeholder logic for retrieving reward balance
-        return 100.0; // Example: returning a fixed balance
-    }
-
-    public List<Transaction> getTransactions(String awardNumber, String fromDate, String toDate) {
-        // Placeholder logic for retrieving transactions within a date range
-        // This can be expanded to fetch actual transactions from a database or other source
-//        LocalDateTime date = LocalDateTime.now();
-        Long longId = 1L; // Example ID
-//        List<Transaction> transaction2 = List.of(new Transaction(longId, LocalDateTime.now(), 50.0), new Transaction("Transaction2", 30.0));
-//        return transaction2;
-        return null;
+    public Integer getRewardBalance(String rewardNumber) {
+        AwardNumber aw = this.findAwardNumberByNumber(rewardNumber);
+        if (aw == null) {
+            throw new RuntimeException("Award number not found: " + rewardNumber);
+        }
+        List<RewardPoints> points = this.rewardPointsRepository.findByAwardNumber(aw.getId());
+        if (points.isEmpty()) {
+            return 0; // No points found for the award number
+        }
+        return points.stream()
+                .map(RewardPoints::getPoints)
+                .reduce(0, Integer::sum);
     }
 
     public AwardNumber findAwardNumberByNumber(String rewardNumber) {
-        return this.awardNumberRepository.findByNumber(rewardNumber)
+        return this.awardNumberRepository.findByNumber(rewardNumber).stream()
+                .reduce((a, b) -> {
+                    throw new RuntimeException("Multiple award numbers found for: " + rewardNumber);
+                })
                 .orElseThrow(() -> new RuntimeException("Award number not found: " + rewardNumber));
     }
 
-    public void saveRewardPoints(String rewardNumber, double v) {
-        Optional<RewardPoints> rewardPoints = this.rewardPointsRepository.findByAwardNumber(rewardNumber);
-        if(rewardPoints.isPresent()){
-            RewardPoints points = rewardPoints.get();
-            double balance = (points.getPoints() + v);
-            points.setPoints((int) balance);
-            this.rewardPointsRepository.save(points);
-            return;
+    public void saveRewardPoints(String rewardNumber, double points) {
+        AwardNumber awardNumber = this.findAwardNumberByNumber(rewardNumber);
+        if (awardNumber == null) {
+            throw new RuntimeException("Award number not found: " + rewardNumber);
         }
+        RewardPoints rp = RewardPoints.builder()
+                .awardNumber(awardNumber.getId())
+                .points((int) points)
+                .updatedAt(LocalDateTime.now())
+                .build();
+        this.rewardPointsRepository.save(rp);
+    }
+
+    public Integer getRewardBalanceFromDateRange(String rewardNumber, LocalDateTime fromDate, LocalDateTime toDate) {
+        AwardNumber awardNumber = this.findAwardNumberByNumber(rewardNumber);
+        List<RewardPoints> rewardPoints = this.rewardPointsRepository.findAllByAwardNumberAndUpdatedAtBetween(
+                awardNumber.getId(), fromDate, toDate);
+        return rewardPoints.stream()
+                .map(RewardPoints::getPoints)
+                .reduce(0, Integer::sum);
     }
 }

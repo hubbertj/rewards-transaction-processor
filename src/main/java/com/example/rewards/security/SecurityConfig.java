@@ -26,6 +26,8 @@ public class SecurityConfig {
                 .requestMatchers(
                         "/auth/**",
                         "/user/**",
+                        "reward/**",
+                        "reward/**/**/**/**/**",
                         "/purchase/**",
                         "/h2-console/**",
                         "/v3/api-docs/**",

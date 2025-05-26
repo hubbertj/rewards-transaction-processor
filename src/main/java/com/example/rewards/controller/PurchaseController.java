@@ -21,7 +21,7 @@ public class PurchaseController {
         this.purchaseService = purchaseService;
     }
 
-    @PostMapping("/purchase")
+    @PostMapping("")
 //    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<PurchaseResponse> handlePurchase(@RequestBody PurchaseRequest request) {
         PurchaseResponse response =  this.purchaseService.createPurchase(request.getRewardNumber(), request.getItems(), request.getAmount());
