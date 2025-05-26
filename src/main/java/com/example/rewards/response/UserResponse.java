@@ -10,7 +10,7 @@ import java.util.List;
 @Getter
 @Setter
 public class UserResponse {
-    private Long id;
+    private Integer id;
     private String username;
     private boolean enabled;
     private List<String> rewardNumbers;
