@@ -133,3 +133,18 @@ INSERT INTO users (username, email, password, role) VALUES
 	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
 	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63)
 	at java.base/java.lang.Thread.run(Thread.java:840)
+2025-05-26 10:37:52.551139-05:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "ROLE" not found; SQL statement:
+SELECT * FROM ROLE [42102-224]
+2025-05-26 10:37:56.033717-05:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "ROLE" not found; SQL statement:
+SELECT * FROM ROLE [42102-224]
+2025-05-26 10:37:58.831938-05:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "ROLE" not found; SQL statement:
+SELECT * FROM ROLE [42102-224]
+2025-05-26 10:41:22.215606-05:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "[*]INTO USER_ROLE (user_id, role_id) VALUES (6, 2)"; expected "INSERT"; SQL statement:
+INTO USER_ROLE (user_id, role_id) VALUES (6, 2) [42001-224]
+2025-05-26 10:41:55.730186-05:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "[*]INTO USER_ROLE (user_id, role_id) VALUES (6, 2)"; expected "INSERT"; SQL statement:
+INTO USER_ROLE (user_id, role_id) VALUES (6, 2) [42001-224]

@@ -1,22 +1,35 @@
 package com.example.rewards.service;
 
+import com.example.rewards.model.AwardNumber;
+import com.example.rewards.model.RewardPoints;
 import com.example.rewards.model.Transaction;
+import com.example.rewards.repository.AwardNumberRepository;
+import com.example.rewards.repository.RewardPointsRepository;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Setter
 @Getter
-@AllArgsConstructor
 public class RewardService {
-    // This service will handle the business logic for managing rewards
-    // Currently, it is a placeholder and can be expanded with actual logic later
+    private final AwardNumberRepository awardNumberRepository;
+    private final RewardPointsRepository rewardPointsRepository;
+
+    @Autowired
+    public RewardService(AwardNumberRepository awardNumberRepository, RewardPointsRepository rewardPointsRepository) {
+        this.awardNumberRepository = awardNumberRepository;
+        this.rewardPointsRepository = rewardPointsRepository;
+    }
+
 
     public String getRewardDetails(String rewardId) {
         // Placeholder logic for retrieving reward details
@@ -37,12 +50,19 @@ public class RewardService {
         return null;
     }
 
-    public double calculateTotalRewards(double[] rewards) {
-        // Placeholder logic for calculating total rewards from an array of rewards
-        double total = 0;
-        for (double reward : rewards) {
-            total += reward;
+    public AwardNumber findAwardNumberByNumber(String rewardNumber) {
+        return this.awardNumberRepository.findByNumber(rewardNumber)
+                .orElseThrow(() -> new RuntimeException("Award number not found: " + rewardNumber));
+    }
+
+    public void saveRewardPoints(String rewardNumber, double v) {
+        Optional<RewardPoints> rewardPoints = this.rewardPointsRepository.findByAwardNumber(rewardNumber);
+        if(rewardPoints.isPresent()){
+            RewardPoints points = rewardPoints.get();
+            double balance = (points.getPoints() + v);
+            points.setPoints((int) balance);
+            this.rewardPointsRepository.save(points);
+            return;
         }
-        return total;
     }
 }

@@ -22,11 +22,9 @@ public class PurchaseController {
     }
 
     @PostMapping("/purchase")
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<PurchaseResponse> handlePurchase(@RequestBody PurchaseRequest request) {
-        System.out.println(request.toString());
-        System.out.println(purchaseService.toString());
-        PurchaseResponse response = new PurchaseResponse(1232, 456, 78.90);
+        PurchaseResponse response =  this.purchaseService.createPurchase(request.getRewardNumber(), request.getItems(), request.getAmount());
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

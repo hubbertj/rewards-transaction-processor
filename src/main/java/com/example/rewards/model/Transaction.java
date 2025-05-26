@@ -1,10 +1,7 @@
 package com.example.rewards.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Set;
 import java.time.LocalDateTime;
@@ -13,12 +10,12 @@ import java.time.LocalDateTime;
 @Table(name = "transactions")
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
-@NoArgsConstructor
 public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
     private LocalDateTime transactionDate;
     private Double totalAmount;
 
@@ -28,6 +25,10 @@ public class Transaction {
 
     @OneToMany(mappedBy = "transaction")
     private Set<TransactionItem> items;
-    // getters and setters
+
+    @ManyToOne
+    @JoinColumn(name = "awardNumber")
+    private AwardNumber awardNumber;
+
 }
 
