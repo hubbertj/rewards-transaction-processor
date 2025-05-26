@@ -30,6 +30,14 @@ public class User {
     )
     private Set<Role> roles;
 
+    @OneToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "user_awardnumber",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "awardnumber_id")
+    )
+    private  Set<AwardNumber> rewardNumber;
+
     // getters and setters
 }
 
