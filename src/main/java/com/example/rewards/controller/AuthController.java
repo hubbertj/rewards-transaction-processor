@@ -1,5 +1,10 @@
 package com.example.rewards.controller;
 
+import com.example.rewards.request.AuthorizationRequest;
+import com.example.rewards.request.PurchaseRequest;
+import com.example.rewards.response.LoginResponse;
+import com.example.rewards.response.UserResponse;
+import com.example.rewards.security.CustomAuthenticationToken;
 import com.example.rewards.security.JwtUtil;
 import com.example.rewards.security.CustomUserDetailsService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -9,6 +14,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
@@ -47,26 +53,20 @@ public class AuthController {
             @ApiResponse(responseCode = "401", description = "Invalid credentials")
         }
     )
-
     @PostMapping("/login")
-    public Map<String, String> login(@RequestBody Map<String, String> loginRequest) {
-        String username = loginRequest.get("username");
-        String password = loginRequest.get("password");
+    public ResponseEntity<LoginResponse> login(@RequestBody AuthorizationRequest request) {
         try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+            authenticationManager.authenticate(new CustomAuthenticationToken(request.getUsername(), request.getPassword()));
         } catch (AuthenticationException e) {
             throw new RuntimeException("Invalid username or password");
         }
-        final UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        final UserDetails userDetails = userDetailsService.loadUserByUsername(request.getUsername());
         //Get Roles
          List<String> roles = userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
-
         final String jwt = jwtUtil.generateToken(userDetails.getUsername(), roles);
-        Map<String, String> response = new HashMap<>();
-        response.put("token", jwt);
-        return response;
+        return ResponseEntity.ok(new LoginResponse(jwt));
     }
 }
 
