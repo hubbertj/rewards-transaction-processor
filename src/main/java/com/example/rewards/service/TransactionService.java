@@ -50,4 +50,12 @@ public class TransactionService {
                 .build();
         return this.transactionRepository.save(t);
     }
+
+    public List<Transaction> getTransactionsFromDateRange(String rewardNumber, LocalDateTime fromDate, LocalDateTime toDate) {
+        AwardNumber awardNumber = this.rewardService.findAwardNumberByNumber(rewardNumber);
+        if (awardNumber == null) {
+            throw new RuntimeException("Award number not found: " + rewardNumber);
+        }
+        return this.transactionRepository.findByAwardNumberAndTransactionDateBetween(awardNumber, fromDate, toDate);
+    }
 }

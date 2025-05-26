@@ -49,6 +49,9 @@ public class PurchaseService {
 
     public PurchaseResponse createPurchase(String rewardNumber, List<Integer> items, Double totalAmount) {
         Transaction t = this.transactionService.createTransaction(rewardNumber, items, totalAmount);
+        if(t == null) {
+            throw new RuntimeException("Transaction creation failed");
+        }
         this.rewardService.saveRewardPoints(rewardNumber, this.calculateRewardPoints(totalAmount));
         return PurchaseResponse.builder()
                 .transactionId(t.getId())

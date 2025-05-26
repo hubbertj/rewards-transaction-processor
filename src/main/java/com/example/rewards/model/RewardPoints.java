@@ -1,13 +1,18 @@
 package com.example.rewards.model;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "rewardpoints")
+@Builder
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class RewardPoints {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,9 +23,9 @@ public class RewardPoints {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "awardNumber")
-    private AwardNumber awardNumber;
+    private Integer awardNumber;
+
+    private LocalDateTime updatedAt;
 
 }
 
