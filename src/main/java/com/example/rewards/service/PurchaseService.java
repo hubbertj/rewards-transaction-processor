@@ -1,12 +1,15 @@
 package com.example.rewards.service;
 
 import com.example.rewards.model.Transaction;
+import com.example.rewards.model.User;
 import com.example.rewards.repository.RewardPointsRepository;
 import com.example.rewards.response.PurchaseResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,11 +21,15 @@ public class PurchaseService {
 
     private final TransactionService transactionService;
     private final RewardService rewardService;
+    private final UserService userService;
 
     @Autowired
-    public PurchaseService(TransactionService transactionService, RewardService rewardService) {
+    public PurchaseService(TransactionService transactionService,
+                           RewardService rewardService,
+                           UserService userService) {
         this.transactionService = transactionService;
         this.rewardService = rewardService;
+        this.userService = userService;
     }
 
 
@@ -48,13 +55,24 @@ public class PurchaseService {
     }
 
     public PurchaseResponse createPurchase(String rewardNumber, List<Integer> items, Double totalAmount) {
-        Transaction t = this.transactionService.createTransaction(rewardNumber, items, totalAmount);
-        if(t == null) {
+        String currentPrincipalName = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (currentPrincipalName == null || currentPrincipalName.isEmpty()) {
+            throw new RuntimeException("User not authenticated");
+        }
+
+        User user = this.userService.getUserByUsername(currentPrincipalName)
+                .orElseThrow(() -> new RuntimeException("User not found with username: " + currentPrincipalName));
+
+        Transaction transaction = this.transactionService.createTransaction(user, rewardNumber, items, totalAmount);
+        if (transaction == null) {
             throw new RuntimeException("Transaction creation failed");
         }
-        this.rewardService.saveRewardPoints(rewardNumber, this.calculateRewardPoints(totalAmount));
+
+        double rewardPoints = this.calculateRewardPoints(totalAmount);
+        this.rewardService.saveRewardPoints(rewardNumber, rewardPoints);
+
         return PurchaseResponse.builder()
-                .transactionId(t.getId())
+                .transactionId(transaction.getId())
                 .build();
     }
 
