@@ -47,14 +47,12 @@ public class RewardController {
     public ResponseEntity<RewardBalanceWithTransactionsResponse> getBalanceWithRange(@PathVariable ("rewardNumber") String rewardNumber,
                                                                                      @RequestParam("fromDate") Date fromDate,
                                                                                      @RequestParam ("toDate") Date toDate) {
-//        LocalDateTime localFromDate = LocalDateTime.parse(fromDate.toString());
-//        LocalDateTime localToDate = LocalDateTime.parse(toDate.toString());
-
-        LocalDateTime localFromDate = LocalDateTime.now();
-        LocalDateTime localToDate = LocalDateTime.now();
-
-        String time = LocalDateTime.now().toString();
-
+        LocalDateTime localFromDate = fromDate.toInstant()
+                .atZone(java.time.ZoneId.systemDefault())
+                .toLocalDateTime();
+        LocalDateTime localToDate = toDate.toInstant()
+                .atZone(java.time.ZoneId.systemDefault())
+                .toLocalDateTime();
         Integer balance = this.rewardService.getRewardBalanceFromDateRange(rewardNumber, localFromDate, localToDate);
         List<Transaction> transactions = this.tranactionService.getTransactionsFromDateRange(rewardNumber, localFromDate, localToDate);
         RewardBalanceWithTransactionsResponse response = new RewardBalanceWithTransactionsResponse(rewardNumber, balance, transactions);
