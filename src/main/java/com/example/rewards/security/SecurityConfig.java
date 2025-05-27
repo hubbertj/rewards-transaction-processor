@@ -27,7 +27,6 @@ public class SecurityConfig {
                         "/auth/**",
                         "/user/**",
                         "reward/**",
-                        "reward/**/**/**/**/**",
                         "/purchase/**",
                         "/h2-console/**",
                         "/v3/api-docs/**",

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Tag(name = "Rewards", description = "Endpoints for all reward-related operations")
@@ -42,13 +43,16 @@ public class RewardController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/balance/{rewardNumber}/{fromDate}/{toDate}")
+    @GetMapping("/balance/{rewardNumber}/range")
     public ResponseEntity<RewardBalanceWithTransactionsResponse> getBalanceWithRange(@PathVariable ("rewardNumber") String rewardNumber,
-                                                                                     @PathVariable ("fromDate") String fromDate,
-                                                                                     @PathVariable ("toDate") String toDate) {
-        LocalDateTime localFromDate = LocalDateTime.parse(fromDate);
-        LocalDateTime localToDate = LocalDateTime.parse(toDate);
-
+                                                                                     @RequestParam("fromDate") Date fromDate,
+                                                                                     @RequestParam ("toDate") Date toDate) {
+        LocalDateTime localFromDate = fromDate.toInstant()
+                .atZone(java.time.ZoneId.systemDefault())
+                .toLocalDateTime();
+        LocalDateTime localToDate = toDate.toInstant()
+                .atZone(java.time.ZoneId.systemDefault())
+                .toLocalDateTime();
         Integer balance = this.rewardService.getRewardBalanceFromDateRange(rewardNumber, localFromDate, localToDate);
         List<Transaction> transactions = this.tranactionService.getTransactionsFromDateRange(rewardNumber, localFromDate, localToDate);
         RewardBalanceWithTransactionsResponse response = new RewardBalanceWithTransactionsResponse(rewardNumber, balance, transactions);
