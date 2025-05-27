@@ -9,11 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 @Tag(name = "Transactions", description = "Endpoints for all transaction-related operations")
@@ -30,18 +29,25 @@ public class TransactionController {
 
     @GetMapping("/{userId}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<TransactionResponse> getTransactionsByUserId(@PathVariable ("userId") String userId) {
+    public ResponseEntity<TransactionResponse> getTransactionsByUserId(@PathVariable ("userId") Integer userId) {
         List<Transaction> transactions = this.transactionService.getTransactionsByUserId(userId);
         TransactionResponse response = new TransactionResponse(transactions);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/{userId}/{dateFrom}/{dateTo}")
+    @GetMapping("/{userId}/range")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<TransactionResponse> getTransactionsByUserId(@PathVariable ("userId") String userId,
-                                                                        @PathVariable ("dateFrom") String dateFrom,
-                                                                        @PathVariable ("dateTo") String dateTo) {
-        List<Transaction> transactions = this.transactionService.getTransactionsByUserIdAndDateRange(userId, dateFrom, dateTo);
+    public ResponseEntity<TransactionResponse> getTransactionsByUserId(@PathVariable ("userId") Integer userId,
+                                                                       @RequestParam("fromDate") Date fromDate,
+                                                                       @RequestParam ("toDate") Date toDate) {
+
+        LocalDateTime localFromDate = fromDate.toInstant()
+                .atZone(java.time.ZoneId.systemDefault())
+                .toLocalDateTime();
+        LocalDateTime localToDate = toDate.toInstant()
+                .atZone(java.time.ZoneId.systemDefault())
+                .toLocalDateTime();
+        List<Transaction> transactions = this.transactionService.getTransactionsByUserIdAndDateRange(userId, localFromDate, localToDate);
         TransactionResponse response = new TransactionResponse(transactions);
         return new ResponseEntity<>(response, HttpStatus.OK);
 
