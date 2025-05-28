@@ -13,6 +13,9 @@ public class AwardNumber {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String number;
-    // getters and setters
+
+    @ManyToOne
+    @JoinColumn(name = "user_id" , referencedColumnName = "id")
+    private User user;
 }
 
