@@ -1,5 +1,6 @@
 package com.example.rewards.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,9 +21,10 @@ public class Transaction {
     private LocalDateTime transactionDate;
     private Double totalAmount;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne()
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
+
 
     @ManyToMany
     @JoinTable(
@@ -31,7 +33,8 @@ public class Transaction {
             inverseJoinColumns = @JoinColumn(name = "item_id"))
     private List<Item> items;
 
-    @OneToOne
+
+    @ManyToOne()
     @JoinColumn(name = "award_number", referencedColumnName = "id")
     private AwardNumber awardNumber;
 
