@@ -1,5 +1,6 @@
 package com.example.rewards.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,6 +15,7 @@ public class AwardNumber {
     private Integer id;
     private String number;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "user_id" , referencedColumnName = "id")
     private User user;

@@ -54,22 +54,23 @@ public class PurchaseService {
         return points;
     }
 
-    public PurchaseResponse createPurchase(String rewardNumber, List<Integer> items, Double totalAmount) {
-        String currentPrincipalName = SecurityContextHolder.getContext().getAuthentication().getName();
-        if (currentPrincipalName == null || currentPrincipalName.isEmpty()) {
+    public PurchaseResponse createPurchase(Integer userId, String rewardNumber, List<Integer> items, Double totalAmount) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (username == null || username.isEmpty()) {
             throw new RuntimeException("User not authenticated");
         }
 
-        User user = this.userService.getUserByUsername(currentPrincipalName)
-                .orElseThrow(() -> new RuntimeException("User not found with username: " + currentPrincipalName));
+        User user = userService.getUserById(userId);
+        if(user == null) {
+            throw new RuntimeException("User not found with id: " + userId);
+        }
+        Transaction transaction = transactionService.createTransaction(user, rewardNumber, items, totalAmount);
 
-        Transaction transaction = this.transactionService.createTransaction(user, rewardNumber, items, totalAmount);
         if (transaction == null) {
             throw new RuntimeException("Transaction creation failed");
         }
 
-        double rewardPoints = this.calculateRewardPoints(totalAmount);
-        this.rewardService.saveRewardPoints(rewardNumber, rewardPoints);
+        rewardService.saveRewardPoints(rewardNumber, calculateRewardPoints(totalAmount));
 
         return PurchaseResponse.builder()
                 .transactionId(transaction.getId())
