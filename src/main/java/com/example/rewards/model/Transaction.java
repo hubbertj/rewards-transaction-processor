@@ -3,7 +3,7 @@ package com.example.rewards.model;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.Set;
+import java.util.List;
 import java.time.LocalDateTime;
 
 @Entity
@@ -20,15 +20,19 @@ public class Transaction {
     private LocalDateTime transactionDate;
     private Double totalAmount;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
-    @OneToMany(mappedBy = "transaction")
-    private Set<TransactionItem> items;
+    @ManyToMany
+    @JoinTable(
+            name = "transaction_item",
+            joinColumns = @JoinColumn(name = "transaction_id"),
+            inverseJoinColumns = @JoinColumn(name = "item_id"))
+    private List<Item> items;
 
-    @ManyToOne
-    @JoinColumn(name = "awardNumber")
+    @OneToOne
+    @JoinColumn(name = "award_number", referencedColumnName = "id")
     private AwardNumber awardNumber;
 
 }
