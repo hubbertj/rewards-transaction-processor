@@ -5,6 +5,7 @@ import com.example.rewards.model.RewardPoints;
 import com.example.rewards.model.Transaction;
 import com.example.rewards.repository.AwardNumberRepository;
 import com.example.rewards.repository.RewardPointsRepository;
+import com.example.rewards.response.RewardResponse;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -77,5 +78,16 @@ public class RewardService {
         return rewardPoints.stream()
                 .map(RewardPoints::getPoints)
                 .reduce(0, Integer::sum);
+    }
+
+    public RewardResponse getRewardNumber(String rewardNumber) {
+        AwardNumber awardNumber = this.findAwardNumberByNumber(rewardNumber);
+        if (awardNumber == null) {
+            return null; // or throw an exception if preferred
+        }
+        return RewardResponse.builder()
+                .rewardNumber(awardNumber.getNumber())
+                .user(awardNumber.getUser())
+                .build();
     }
 }

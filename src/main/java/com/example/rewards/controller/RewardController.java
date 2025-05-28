@@ -3,6 +3,7 @@ package com.example.rewards.controller;
 import com.example.rewards.model.Transaction;
 import com.example.rewards.response.RewardBalanceResponse;
 import com.example.rewards.response.RewardBalanceWithTransactionsResponse;
+import com.example.rewards.response.RewardResponse;
 import com.example.rewards.service.RewardService;
 import com.example.rewards.service.TransactionService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.core.Local;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -56,6 +58,16 @@ public class RewardController {
         Integer balance = this.rewardService.getRewardBalanceFromDateRange(rewardNumber, localFromDate, localToDate);
         List<Transaction> transactions = this.tranactionService.getTransactionsFromDateRange(rewardNumber, localFromDate, localToDate);
         RewardBalanceWithTransactionsResponse response = new RewardBalanceWithTransactionsResponse(rewardNumber, balance, transactions);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/user/{rewardNumber}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<RewardResponse> getRewardNumber(@PathVariable ("rewardNumber") String rewardNumber){
+        RewardResponse response = this.rewardService.getRewardNumber(rewardNumber);
+        if (response == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
